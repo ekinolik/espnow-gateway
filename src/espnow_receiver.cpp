@@ -3,10 +3,6 @@
 
 EspNowReceiver* EspNowReceiver::s_instance = nullptr;
 
-namespace {
-    const uint8_t MSG_APPEND_LOG = 1;
-}
-
 EspNowReceiver::EspNowReceiver() {}
 
 bool EspNowReceiver::begin() {
@@ -136,7 +132,7 @@ void EspNowReceiver::processRxItem(const RxItem& item) {
     LogMessageV1 msg;
     memcpy(&msg, item.data, sizeof(LogMessageV1));
 
-    if (msg.version != LOG_PKT_VERSION || msg.msgType != MSG_APPEND_LOG) {
+    if (msg.version != LOG_PKT_VERSION) {
         m_parseErrors++;
         Serial.println("[ESPNOW] Invalid version/type");
 

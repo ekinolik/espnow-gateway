@@ -44,7 +44,6 @@ void loop() {
 
     while (espNowReceiver.dequeueMessage(rx)) {
         bool accepted = false;
-        bool pktWritten = false;
         bool duplicatePkt = isDuplicate(rx.msg.deviceID, rx.msg.sequence);
 
         if (duplicatePkt) {
@@ -64,10 +63,6 @@ void loop() {
 
         if (!accepted) {
             Serial.println("[MAIN] Packet rejected, NACK sent");
-        }
-
-        if (!espNowReceiver.sendAck(rx.mac, rx.msg.deviceID, rx.msg.sequence, accepted)) {
-            Serial.println("[MAIN] Failed to send ACK");
         }
     }
 }
