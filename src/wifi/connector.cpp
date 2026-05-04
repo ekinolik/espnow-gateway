@@ -3,6 +3,9 @@
 //WifiConnector::WifiConnector() : m_connected(false) {};
 
 namespace Wifi {
+    bool Connector::m_connected = false;
+    CredentialData Connector::m_credentials = {};
+
     void Connector::begin(bool needInit) {
         if (needInit) {
             Connector::init();

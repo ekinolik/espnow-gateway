@@ -3,6 +3,7 @@
 #include "espnow_receiver.h"
 #include "wifi/connector.h"
 #include "wifi/portal.h"
+#include "wifi/wifi.h"
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -28,6 +29,8 @@ DeviceSequenceState g_deviceSeq[MAX_DEVICES];
 
 static void printPacket(const EspNowReceiver::ReceivedMessage& rx);
 static void loadPortal();
+static bool enterDebug();
+bool debugMode = false;
 
 void quietUnusedHeaderPins() {
   const gpio_num_t pins[] = {
@@ -73,9 +76,14 @@ void setup() {
     Serial.println("Boot Complete");
     Serial.println("Starting Bridge Setup...");
 
-    Wifi::Connector wifiConnector;
-    wifiConnector.begin(!wifiConnector.connected());
-    if (!wifiConnector.connect()) {
+    /* Do not connect to wifi if we enter debug mode */
+    if (enterDebug()) {
+        delay(AppConfig::DEBUG_MODE_DELAY_MS);
+        return;
+    }
+
+    Wifi::begin(!Wifi::isConnected());
+    if (!Wifi::connect()) {
         Serial.println("[MAIN] WIFI init failed, will load portal");
         loadPortal();
         apMode = true;
@@ -85,7 +93,8 @@ void setup() {
 
     Serial.println("[MAIN] WIFI init OK");
 
-    if (!espNowReceiver.begin(!wifiConnector.connected())) {
+    //if (!espNowReceiver.begin(!wifiConnector.connected())) {
+    if (!espNowReceiver.begin(!Wifi::isConnected())) {
         Serial.println("[MAIN] ESPNOW Receiver init failed");
         return;
     }
@@ -94,7 +103,7 @@ void setup() {
 
 void loop() {
     if (apMode) {
-        portal.loop();
+        Wifi::portal().loop();
         return;
     }
 
@@ -171,5 +180,21 @@ static void printPacket(const EspNowReceiver::ReceivedMessage& rx) {
 }
 
 static void loadPortal() {
-    portal.begin();
+    Wifi::portal().begin();
+}
+
+bool enterDebug() {
+    if (AppConfig::FORCE_AP_MODE) {
+        Serial.println("[MAIN] Loading AP Portal...");
+        loadPortal();
+        apMode = true;
+        debugMode = true;
+    }
+
+    if (AppConfig::CLEAR_WIFI_CREDS) {
+        Wifi::clearCredentialPrefs();
+        debugMode = true;
+    }
+
+    return debugMode;
 }

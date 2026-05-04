@@ -24,7 +24,7 @@ namespace Wifi {
         static bool set(const char* ssid, const char* password);
         static bool setAndSave(const char* ssid, const char* password);
 
-        static bool clear();
+        static bool clearPrefs();
 
         private:
         static Wifi::CredentialData m_credentials;

@@ -1,5 +1,6 @@
 #include "wifi/portal.h"
 #include "wifi/credentials.h"
+#include "wifi/scan.h"
 
 Wifi::Portal::Portal(const Wifi::Portal::Config& cfg) : cfg_(cfg) {};
 
@@ -128,7 +129,7 @@ namespace Wifi {
         */
 
         s += "<form method='POST' action='/save'>";
-        s += "<label>SSID</label><input name='ssid' required>";
+        s += "<label>SSID</label><select name='ssid' required>" + ssid_dropdown_ + "</select><br />";
         s += "<label>Password</label><input name='pass' type='password' required>";
         s += "<button type='submit'>Save &amp; Reboot</button>";
         s += "</form>";
@@ -184,6 +185,22 @@ namespace Wifi {
 
     void Portal::begin() {
 
+        auto networks = Wifi::Scanner::networks();
+
+        Portal::generateSSIDDropdown_(networks);
+
+        /*
+        for (const auto& network : networks) {
+            Serial.printf(
+                "SSID=%s RSSI=%d ENC=%d CH=%d\n",
+                network.ssid.c_str(),
+                network.rssi,
+                network.encryptionType,
+                network.channel
+            );
+        }
+        */
+
         // Portal routes always available (even if in STA if you want "change wifi".
         registerCommonRoutes_();
 
@@ -211,4 +228,37 @@ namespace Wifi {
         Serial.println("WifiPortal: WiFi credentials cleared for factor reset.");
     }
     */
+
+    void Portal::generateSSIDDropdown_(auto networks) {
+        String dropdown;
+        dropdown.reserve(1000);
+        dropdown += "<option value='' disabled selected>Select Wi-Fi network</option>";
+
+        for (const auto& network : networks) {
+            dropdown += "<option value='";
+            dropdown += network.ssid;
+            dropdown += "'>";
+            dropdown += network.ssid;
+            dropdown += " (";
+            dropdown += String(calculateSignalStrength_(network.rssi));
+            dropdown += ")</option>";
+        }
+
+        ssid_dropdown_ = dropdown;
+    }
+
+    String Portal::calculateSignalStrength_(int32_t rssi) {
+        if (rssi >= -50) {
+            return "&#9646&#9646&#9646&#9646"; // Excellent
+        } else if (rssi >= -60) {
+            return "&#9646&#9646&#9646&#9647"; // Good
+        } else if (rssi >= -70) {
+            return "&#9646&#9646&#9647&#9647"; // Fair
+        } else if (rssi >= -80) {
+            return "&#9646&#9647&#9647&#9647"; // Weak
+        } else {
+            return "&#9647&#9647&#9647&#9647"; // Very weak
+        }
+
+    }
 }

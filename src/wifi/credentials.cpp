@@ -24,10 +24,31 @@ namespace Wifi {
             password = prefs.getString("password", AppConfig::WIFI_PASSWORD);
             Serial.println("[CREDENTIALS] Loaded credentials from storage");
         }
+        prefs.end();
 
         Serial.printf("[CREDENTIALS] Loaded credentials. SSID=%s, Password=%s\n", ssid.c_str(), password.c_str());
 
         return CredentialData{ssid, password};
+    }
+
+    bool Credentials::clearPrefs() {
+        Preferences prefs;
+        if (!prefs.begin("wifi", false)) {
+            Serial.println("[CREDENTIALS] Failed to open preferences for clearing");
+            return false;
+        }
+
+        bool success = prefs.clear();
+        prefs.end();
+
+        if (success) {
+            Serial.println("[CREDENTIALS] Cleared credentials from storage");
+            m_credentials = {};
+        } else {
+            Serial.println("[CREDENTIALS] Failed to clear credentials from storage");
+        }
+
+        return success;
     }
 
     bool Credentials::save(const CredentialData& creds) {

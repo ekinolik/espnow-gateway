@@ -9,16 +9,16 @@
 namespace Wifi {
     class Connector {
         public:
-        void begin(bool needInit);
-        void init();
-        bool connect();
+        static void begin(bool needInit);
+        static void init();
+        static bool connect();
 
-        bool connected() const { return m_connected; }
-        bool loadCredentials();
-        bool areCredentialsValid() const { return m_credentials.isValid(); }
+        static bool connected() { return m_connected; }
+        static bool loadCredentials();
+        static bool areCredentialsValid() { return m_credentials.isValid(); }
 
         private:
-        bool m_connected = false;
-        CredentialData m_credentials;
+        static bool m_connected;
+        static CredentialData m_credentials;
     };
 }

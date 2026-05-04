@@ -69,5 +69,9 @@ namespace Wifi {
         void handlePortalRoot_();
         void handleWifiForm_();
         void handleSave_();
+
+        String calculateSignalStrength_(int32_t rssi);
+        void generateSSIDDropdown_(auto networks);
+        String ssid_dropdown_;
     };
 }
