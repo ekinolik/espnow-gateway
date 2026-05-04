@@ -5,14 +5,16 @@ EspNowReceiver* EspNowReceiver::s_instance = nullptr;
 
 EspNowReceiver::EspNowReceiver() {}
 
-bool EspNowReceiver::begin() {
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-    delay(100);
+bool EspNowReceiver::begin(bool needInit) {
+    if (needInit) {
+        WiFi.mode(WIFI_STA);
+        WiFi.disconnect();
+        delay(100);
 
-    if (esp_wifi_set_channel(AppConfig::ESPNOW_CHANNEL, WIFI_SECOND_CHAN_NONE) != ESP_OK) {
-        Serial.println("[ESPNOW] failed to set channel");
-        return false;
+        if (esp_wifi_set_channel(AppConfig::ESPNOW_CHANNEL, WIFI_SECOND_CHAN_NONE) != ESP_OK) {
+            Serial.println("[ESPNOW] failed to set channel");
+            return false;
+        }
     }
 
     if (esp_now_init() != ESP_OK) {
@@ -181,7 +183,7 @@ void EspNowReceiver::maybeAddPeer(const uint8_t mac[6]) {
     esp_now_peer_info_t peer = {};
     memcpy(peer.peer_addr, mac, 6);
     peer.channel = AppConfig::ESPNOW_CHANNEL;
-    peer.channel = 0;
+    peer.ifidx = WIFI_IF_STA;
     peer.encrypt = false;
 
     esp_err_t err = esp_now_add_peer(&peer);

@@ -17,7 +17,7 @@ public:
 
     EspNowReceiver();
 
-    bool begin();
+    bool begin(bool needInit = true);
     void update();
 
     // Consumer pulls parsed messages from here.
