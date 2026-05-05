@@ -1,6 +1,6 @@
 #include "wifi/wifi.h"
 
-namespace Wifi {
+namespace WifiMgr {
 
     static Portal s_portal{Portal::Config()};
 

@@ -6,7 +6,7 @@
 #include <WiFi.h>
 #include <esp_wifi.h>
 
-namespace Wifi {
+namespace WifiMgr {
     class Connector {
         public:
         static void begin(bool needInit);

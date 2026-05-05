@@ -5,7 +5,7 @@
 #include "portal.h"
 #include "scan.h"
 
-namespace Wifi {
+namespace WifiMgr {
     void begin(bool needInit = true);
 
     // Connector

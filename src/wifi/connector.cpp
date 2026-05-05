@@ -2,7 +2,7 @@
 
 //WifiConnector::WifiConnector() : m_connected(false) {};
 
-namespace Wifi {
+namespace WifiMgr {
     bool Connector::m_connected = false;
     CredentialData Connector::m_credentials = {};
 
@@ -21,7 +21,7 @@ namespace Wifi {
     }
 
     bool Connector::connect() {
-        if (!Wifi::Connector::m_credentials.isValid()) {
+        if (!WifiMgr::Connector::m_credentials.isValid()) {
             Serial.println("[WIFI] No valid credentials, cannot connect");
             m_connected = false;
             return false;

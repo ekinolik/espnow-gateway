@@ -1,6 +1,6 @@
 #include "wifi/scan.h"
 
-namespace Wifi {
+namespace WifiMgr {
     std::vector<Scanner::Network> Scanner::networks(bool uniqueSsids) {
         std::vector<Network> result;
 

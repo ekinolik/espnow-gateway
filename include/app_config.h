@@ -13,7 +13,7 @@
 
 namespace AppConfig {
     // ESPNOW
-    static constexpr uint8_t ESPNOW_CHANNEL = 0;
+    static constexpr uint8_t ESPNOW_CHANNEL = 0; // 0 means to use current WiFi channel, otherwise set this to a fixed channel
     static constexpr size_t ESPNOW_RX_QUEUE_SIZE = 8;
     static constexpr bool ESPNOW_REQUIRE_KNOWN_PEERS = false; // start open
 

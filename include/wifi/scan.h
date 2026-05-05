@@ -3,7 +3,7 @@
 #include <WiFi.h>
 #include <vector>
 
-namespace Wifi {
+namespace WifiMgr {
     class Scanner {
         public:
         struct Network {

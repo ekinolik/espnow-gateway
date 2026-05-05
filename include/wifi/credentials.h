@@ -4,7 +4,7 @@
 
 #include <Preferences.h>
 
-namespace Wifi {
+namespace WifiMgr {
     struct CredentialData {
         String SSID;
         String PASSWORD;
@@ -16,19 +16,19 @@ namespace Wifi {
 
     class Credentials {
         public:
-        static const Wifi::CredentialData credentials;
+        static const WifiMgr::CredentialData credentials;
 
-        static Wifi::CredentialData get();
+        static WifiMgr::CredentialData get();
 
-        static bool save(const Wifi::CredentialData& creds);
+        static bool save(const WifiMgr::CredentialData& creds);
         static bool set(const char* ssid, const char* password);
         static bool setAndSave(const char* ssid, const char* password);
 
         static bool clearPrefs();
 
         private:
-        static Wifi::CredentialData m_credentials;
+        static WifiMgr::CredentialData m_credentials;
 
-        static Wifi::CredentialData getFromStorage();
+        static WifiMgr::CredentialData getFromStorage();
     };
 }

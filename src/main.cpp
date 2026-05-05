@@ -1,16 +1,16 @@
 #include "app_config.h"
 #include "boot_state.h"
 #include "espnow_receiver.h"
-#include "wifi/connector.h"
-#include "wifi/portal.h"
 #include "wifi/wifi.h"
 
-#include <Arduino.h>
-#include <WiFi.h>
 #include <esp_wifi.h>
 
+static void printPacket(const EspNowReceiver::ReceivedMessage& rx);
+static void loadPortal();
+static bool enterDebug();
 void markSeen(const char* deviceID, uint32_t sequence);
 bool isDuplicate(const char* deviceID, uint32_t sequence);
+bool debugMode = false;
 
 EspNowReceiver espNowReceiver;
 
@@ -20,17 +20,13 @@ struct DeviceSequenceState {
     bool used = false;
 };
 
-Wifi::Portal::Config cfg;
-Wifi::Portal portal(cfg);
+WifiMgr::Portal::Config cfg;
+WifiMgr::Portal portal(cfg);
 bool apMode = false;
 
 static constexpr size_t MAX_DEVICES = 16;
 DeviceSequenceState g_deviceSeq[MAX_DEVICES];
 
-static void printPacket(const EspNowReceiver::ReceivedMessage& rx);
-static void loadPortal();
-static bool enterDebug();
-bool debugMode = false;
 
 void quietUnusedHeaderPins() {
   const gpio_num_t pins[] = {
@@ -82,8 +78,8 @@ void setup() {
         return;
     }
 
-    Wifi::begin(!Wifi::isConnected());
-    if (!Wifi::connect()) {
+    WifiMgr::begin(!WifiMgr::isConnected());
+    if (!WifiMgr::connect()) {
         Serial.println("[MAIN] WIFI init failed, will load portal");
         loadPortal();
         apMode = true;
@@ -93,8 +89,7 @@ void setup() {
 
     Serial.println("[MAIN] WIFI init OK");
 
-    //if (!espNowReceiver.begin(!wifiConnector.connected())) {
-    if (!espNowReceiver.begin(!Wifi::isConnected())) {
+    if (!espNowReceiver.begin(!WifiMgr::isConnected())) {
         Serial.println("[MAIN] ESPNOW Receiver init failed");
         return;
     }
@@ -103,7 +98,7 @@ void setup() {
 
 void loop() {
     if (apMode) {
-        Wifi::portal().loop();
+        WifiMgr::portal().loop();
         return;
     }
 
@@ -180,7 +175,7 @@ static void printPacket(const EspNowReceiver::ReceivedMessage& rx) {
 }
 
 static void loadPortal() {
-    Wifi::portal().begin();
+    WifiMgr::portal().begin();
 }
 
 bool enterDebug() {
@@ -192,7 +187,7 @@ bool enterDebug() {
     }
 
     if (AppConfig::CLEAR_WIFI_CREDS) {
-        Wifi::clearCredentialPrefs();
+        WifiMgr::clearCredentialPrefs();
         debugMode = true;
     }
 

@@ -8,7 +8,7 @@
 #include <DNSServer.h>
 #include <Preferences.h>
 
-namespace Wifi {
+namespace WifiMgr {
     class Portal {
     public:
         void factoryResetWifi(); // Clears SSID/password from NVS

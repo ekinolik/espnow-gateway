@@ -2,9 +2,9 @@
 #include "wifi/credentials.h"
 #include "wifi/scan.h"
 
-Wifi::Portal::Portal(const Wifi::Portal::Config& cfg) : cfg_(cfg) {};
+WifiMgr::Portal::Portal(const WifiMgr::Portal::Config& cfg) : cfg_(cfg) {};
 
-namespace Wifi {
+namespace WifiMgr {
     String Portal::saveSSID() const {
         // Preferences is not const friendly; expose a method instead of direct access.
         // We'll reopen read-only if you want, but simplist is: call after begin() and cache externally.
@@ -160,13 +160,13 @@ namespace Wifi {
             return;
         }
 
-        Wifi::CredentialData creds{ssid, pass};
+        WifiMgr::CredentialData creds{ssid, pass};
         if (!creds.isValid()) {
             server_.send(400, "text/plain", "Invalid credentials");
             return;
         }
 
-        if (!Wifi::Credentials::save(creds)) {
+        if (!WifiMgr::Credentials::save(creds)) {
             server_.send(500, "text/plain", "Failed to save credentials");
             return;
         }
@@ -185,7 +185,7 @@ namespace Wifi {
 
     void Portal::begin() {
 
-        auto networks = Wifi::Scanner::networks();
+        auto networks = WifiMgr::Scanner::networks();
 
         Portal::generateSSIDDropdown_(networks);
 

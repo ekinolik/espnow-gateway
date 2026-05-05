@@ -1,8 +1,8 @@
 #include "wifi/credentials.h"
 
-Wifi::CredentialData Wifi::Credentials::m_credentials;
+WifiMgr::CredentialData WifiMgr::Credentials::m_credentials;
 
-namespace Wifi {
+namespace WifiMgr {
     CredentialData Credentials::get() {
         if (m_credentials.isValid()) {
             Serial.printf("[CREDENTIALS] Valid credentials for %s found in RAM\n", m_credentials.SSID.c_str());
